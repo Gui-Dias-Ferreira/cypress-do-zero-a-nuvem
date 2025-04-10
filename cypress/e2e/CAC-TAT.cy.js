@@ -9,7 +9,10 @@ describe("Central de Atendimento ao Cliente TAT", () => {
     cy.title().should("be.equal", "Central de Atendimento ao Cliente TAT");
   });
 
-  it.skip("preenche os campos obrigatórios e envia o formulário", () => {
+  it("preenche os campos obrigatórios e envia o formulário", () => {
+    // Congelando o navegador
+    cy.clock();
+
     // Criei a constnte longText para escrever um texto longo, esse texto irá repetir 10 vezes
     const longText = Cypress._.repeat("abdcdefghijllmnopkrstuvwxyz", 10);
 
@@ -23,25 +26,39 @@ describe("Central de Atendimento ao Cliente TAT", () => {
     cy.contains("button", "Enviar").click();
 
     cy.get(".success").should("be.visible");
+
+    //Avançar 3s no tempo para verificar se a msg desapareceu
+    cy.tick(3000);
+
+    cy.get(".success").should("not.be.visible");
   });
 
-  it.skip("exibe mensagem de erro ao submeter o formulário com um email com formatação inválida", () => {
+  it("exibe mensagem de erro ao submeter o formulário com um email com formatação inválida", () => {
+    cy.clock();
+
     cy.get('[id="firstName"]').type("Guilherme");
     cy.get('[id="lastName"]').type("Dias Ferreira");
     cy.get('[id="email"]').type("guilhermedias.ferreirahotmail.com");
     cy.get('[id="open-text-area"]').type(
       "Estou testando a aplicação CAC TAT pela automação estou escrevendo nesse input"
     );
+
     cy.get(".button").click(); //cy.contains('button', 'Enviar').click()
 
     cy.get(".error").should("be.visible");
+
+    cy.tick(3000);
+
+    cy.get(".error").should("not.be.visible");
   });
 
-  it.skip("verificando que o campo de telefone permanece vazio quando digito valor não-numérico", () => {
+  it("verificando que o campo de telefone permanece vazio quando digito valor não-numérico", () => {
     cy.get("#phone").type("abcde").should("have.value", "");
   });
 
   it("exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário", () => {
+    cy.clock();
+
     cy.get('[id="firstName"]').type("Guilherme");
     cy.get('[id="lastName"]').type("Dias Ferreira");
     cy.get('[id="email"]').type("guilhermedias.ferreira@hotmail.com");
@@ -52,9 +69,13 @@ describe("Central de Atendimento ao Cliente TAT", () => {
     cy.get(".button").click(); //cy.contains('button', 'Enviar').click()
 
     cy.get(".error").should("be.visible");
+
+    cy.tick(3000);
+
+    cy.get(".error").should("not.be.visible");
   });
 
-  it.skip("preenche e limpa os campos nome, sobrenome, email e telefone", () => {
+  it("preenche e limpa os campos nome, sobrenome, email e telefone", () => {
     cy.get('[id="firstName"]').as("nome").type("Guilherme");
     cy.get("@nome") // é só um exemplo que eu fiz.
       .should("have.value", "Guilherme")
@@ -80,14 +101,20 @@ describe("Central de Atendimento ao Cliente TAT", () => {
       .should("have.value", "");
   });
 
-  it.skip("exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios", () => {
+  it("exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios", () => {
+    cy.clock();
+
     cy.get(".button").click(); //cy.contains('button', 'Enviar').click()
 
     cy.get(".error").should("be.visible");
+
+    cy.tick(3000);
+
+    cy.get(".error").should("not.be.visible");
   });
 
   //Para criar um comando customizado preciso ir no diretório cypress/spport/commands.js ou qualquer arquivo que eu criar, dentro desse arquivo crio o comando customizado. Esse arquivo que eu criar precisa ser importado no e2s.js
-  it.skip("envia o formulário com sucesso usando um comando customizado", () => {
+  it("envia o formulário com sucesso usando um comando customizado", () => {
     // const data = {
     //   firstName: 'Guilherme',
     //   lastName: 'Dias',
@@ -96,22 +123,27 @@ describe("Central de Atendimento ao Cliente TAT", () => {
     // }
     // cy.fillMandatoryFieldsAndSubmit(data);
 
+    cy.clock();
     // Chamada com valor padrão
     cy.fillMandatoryFieldsAndSubmit();
 
     cy.get(".success").should("be.visible");
+
+    cy.tick(3000);
+
+    cy.get(".success").should("not.be.visible");
   });
 
   // Existe 3 formas de pegar um elemento na lista suspensa: texto do conteúdo, pela propriedade 'value' e pelo indice que vai do 0 em diante
-  it.skip("seleciona um produto (YouTube) por seu texto", () => {
-    cy.get("select").select("YouTube").should("have.value", " youtube");
-    cy.get("select").select("mentoria").should("have.value", " mentoria");
+  it("seleciona um produto (YouTube) por seu texto", () => {
+    cy.get("select").select("YouTube").should("have.value", "youtube");
+    cy.get("select").select("mentoria").should("have.value", "mentoria");
     cy.get("select").select(1).should("have.value", "blog");
     //Texto                        //Propriedade value
     cy.get("select").select("Cursos").should("have.value", "cursos");
   });
 
-  it.skip("seleciona um produto (Mentoria) por seu valor (value)", () => {
+  it("seleciona um produto (Mentoria) por seu valor (value)", () => {
     cy.get("select").select("mentoria").should("have.value", "mentoria");
   });
 
@@ -193,5 +225,4 @@ describe("Central de Atendimento ao Cliente TAT", () => {
       .click();
     cy.contains("h1", "CAC TAT - Política de Privacidade").should("be.visible");
   });
-
 });

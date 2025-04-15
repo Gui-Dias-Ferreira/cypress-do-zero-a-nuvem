@@ -3,7 +3,7 @@
 describe("Central de Atendimento ao Cliente TAT", () => {
   // beforeEach(() =>{}) antes de cada teste executa um bloco de código que está aqui dentro.
   beforeEach(() => {
-    cy.visit.skip("./src/index.html");
+    cy.visit("./src/index.html");
   });
   it.skip("verifica o título da aplicação", () => {
     cy.tit.skiple().should("be.equal", "Central de Atendimento ao Cliente TAT");
@@ -224,5 +224,39 @@ describe("Central de Atendimento ao Cliente TAT", () => {
       .invoke("removeAttr", "target") // Estou removendo o atributo 'target' do elemento e simulando que ele está abrindo na mesma página
       .click();
     cy.contains("h1", "CAC TAT - Política de Privacidade").should("be.visible");
+  });
+  it.skip("exibe e oculta as mensagens de sucesso e erro usando .invoke()", () => {
+    cy.get(".success")
+      .should("not.be.visible")
+      .invoke("show")
+      .should("be.visible")
+      .and("contain", "Mensagem enviada com sucesso.")
+      .invoke("hide")
+      .should("not.be.visible");
+    cy.get(".error")
+      .should("not.be.visible")
+      .invoke("show")
+      .should("be.visible")
+      .and("contain", "Valide os campos obrigatórios!")
+      .invoke("hide")
+      .should("not.be.visible");
+  });
+  it.skip("preenche o campo da área de texto usando o comando invoke", () => {
+    cy.get("#open-text-area")
+      .invoke("val", "um texto qualquer")
+      .should("have.value", "um texto qualquer");
+  });
+
+  it.only("faz uma requisição HTTP", () => {
+    cy.request("https://cac-tat-v3.s3.eu-central-1.amazonaws.com/index.html")
+      .as('getRequest')
+      .its('status')
+      .should('be.equal', 200)
+    cy.get('@getRequest')
+      .its('statusText')
+      .should('be.equal', 'OK')
+    cy.get('@getRequest')
+      .its('body')
+      .should('include', 'CAC TAT')
   });
 });
